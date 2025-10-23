@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ challenge.title }} | LLMGoat</title>
+
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo_llmgoat.png') }}">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top, #0f0f17, #161623);
+      color: #e6e6e6;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column; 
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image: linear-gradient(0deg, rgba(0,255,200,0.05) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0,255,200,0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: moveGrid 15s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes moveGrid {
+      from { background-position: 0 0, 0 0; }
+      to { background-position: 40px 40px, 40px 40px; }
+    }
+    .chat-header {
+      width: 100%;
+      max-width: 700px;
+      margin-top: 20px;
+      padding: 0 20px;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .chat-header h2 {
+      color: #00ffc8;
+      font-size: 1.8em;
+      text-shadow: 0 0 8px rgba(0,255,200,0.5);
+      margin: 0 0 5px 0;
+    }
+
+    .chat-header p.challenge-desc {
+      color: #c2c2c2;
+      font-size: 1em;
+      margin: 0 0 30px 0;
+    }
+
+    .chat-container {
+      background: rgba(15,17,23,0.95);
+      border: 1px solid rgba(0,255,200,0.15);
+      border-radius: 15px;
+      width: 100%;
+      max-width: 700px;
+      height: 600px;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-shadow: 0 0 25px rgba(0,255,200,0.2);
+      z-index: 1;
+      position: relative;
+    }
+
+    #chat-box {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-right: 5px;
+      margin-bottom: 10px;
+    }
+
+    .message {
+      display: inline-block;
+      padding: 10px 14px;
+      border-radius: 12px;
+      max-width: 75%;
+      word-wrap: break-word;
+    }
+
+    .user-msg {
+      background: linear-gradient(90deg, #00ffc8, #007bff);
+      color: #0a0a0f;
+      align-self: flex-end;
+      text-align: right;
+    }
+
+    .bot-msg {
+      background: rgba(0,255,200,0.08);
+      color: #e6e6e6;
+      align-self: flex-start;
+      text-align: left;
+    }
+
+    .loading {
+      font-style: italic;
+      color: #888;
+    }
+    
+    .placeholder-msg {
+        background: none;
+        color: #7f7f7f;
+        font-style: italic;
+        text-align: center;
+        align-self: center;
+        max-width: 90%;
+        border: none;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center; 
+      gap: 8px;
+      margin-top: auto; 
+    }
+
+    input#user-input {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(0,255,200,0.2);
+      background: rgba(0,255,200,0.05);
+      color: #e6e6e6;
+      font-family: 'Courier New', monospace;
+      font-size: 1em;
+      height: 42px; 
+      box-sizing: border-box; 
+    }
+
+    input#user-input::placeholder {
+      color: #7f7f7f;
+    }
+
+    .file-upload {
+      position: relative;
+      display: inline-block;
+      height: 42px; 
+    }
+
+    .file-upload input[type="file"] {
+      display: none; 
+    }
+
+    .file-upload label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px; 
+      height: 42px;
+      background: linear-gradient(90deg, #00ffc8, #007bff);
+      border-radius: 8px;
+      font-size: 1.6em; 
+      color: #0a0a0f;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0,255,200,0.3);
+      transition: all 0.2s ease;
+    }
+
+    .file-upload label:hover {
+      box-shadow: 0 0 20px rgba(0,255,200,0.6);
+      transform: scale(1.05);
+    }
+
+    button, .btn-back {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      background: linear-gradient(90deg, #007bff, #00ffcc);
+      color: white;
+      box-shadow: 0 0 10px rgba(0,255,200,0.3);
+      transition: all 0.2s ease;
+      position: relative; 
+      z-index: 10;
+    }
+
+    button:hover, .btn-back:hover {
+      box-shadow: 0 0 20px rgba(0,255,200,0.6);
+      transform: scale(1.05);
+    }
+    
+    .btn-back {
+        margin-top: 20px; 
+        margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-header">
+    <h2>{{ challenge.title }}</h2>
+    <p class="challenge-desc"></p>
+  </div>
+
+  <div class="chat-container">
+    <div id="chat-box"></div>
+
+    <div class="input-group">
+      <input type="text" id="user-input" placeholder="Type your message...">
+      
+      <div class="file-upload">
+        <input type="file" id="file-input" accept=".txt,.pdf,.jpg,.jpeg,.png">
+        <label for="file-input">+</label>
+      </div>
+      <button id="send-btn">Send</button>
+      <button id="restart-btn">Restart</button>
+    </div>
+  </div>
+
+  <a href="{{ url_for('challenge_page', id=challenge.id) }}" class="btn-back">⬅ Back to Challenge Page</a>
+
+  <script>
+    const chatBox = document.getElementById("chat-box");
+    const userInput = document.getElementById("user-input");
+    const sendBtn = document.getElementById("send-btn");
+    const restartBtn = document.getElementById("restart-btn");
+    const fileInput = document.getElementById("file-input");
+    const challengeId = "{{ challenge.id }}";
+
+    function showPlaceholder() {
+        chatBox.innerHTML = ''; 
+        const placeholderText = "Welcome to the challenge! Type your prompt or upload a file to begin the chat.";
+        const div = document.createElement("div");
+        div.classList.add("message", "bot-msg", "placeholder-msg");
+        div.innerText = placeholderText;
+        chatBox.appendChild(div);
+    }
+
+    function addMessage(text, sender) {
+        const placeholder = document.querySelector('.placeholder-msg');
+        if (placeholder) {
+            placeholder.remove();
+        }
+        
+        const div = document.createElement("div");
+        div.classList.add("message", sender + "-msg");
+        div.innerText = text;
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function addLoading() {
+        const div = document.createElement("div");
+        div.classList.add("message", "bot-msg", "loading");
+        div.innerText = "Bot is typing...";
+        div.id = "loading-msg";
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function removeLoading() {
+        const div = document.getElementById("loading-msg");
+        if (div) div.remove();
+    }
+
+    const observer = new MutationObserver(() => {
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
+    observer.observe(chatBox, { childList: true });
+
+    async function sendFile(file) {
+        addMessage(`📎 Uploaded file: ${file.name}`, 'user');
+        addLoading();
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const response = await fetch(`/api/${challengeId}/upload`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            const data = await response.json();
+            removeLoading();
+
+            if (response.ok) {
+                addMessage(data.response, 'bot');
+            } else {
+                addMessage(`Error: ${data.error || 'Failed to upload file.'}`, 'bot');
+            }
+
+        } catch (error) {
+            removeLoading();
+            console.error('File upload error:', error);
+            addMessage('An unexpected network error occurred.', 'bot');
+        }
+    }
+
+    fileInput.addEventListener('change', () => {
+      if(fileInput.files.length > 0){
+        const file = fileInput.files[0];
+        sendFile(file);
+        fileInput.value = '';
+      }
+    });
+
+    window.onload = showPlaceholder;
+  </script>
+
+  <script src="{{ url_for('static', filename='chatbot/script.js') }}"></script>
+</body>
+</html>

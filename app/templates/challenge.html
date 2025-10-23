@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ challenge.title }} | LLMGoat</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo_llmgoat.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top, #0f0f17, #161623);
+      color: #e5e5e5;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* vertical center */
+      align-items: center; 
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background: rgba(30, 30, 47, 0.95);
+      padding: 40px 60px;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(0, 255, 204, 0.1);
+      max-width: 700px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      animation: fadeIn 0.8s ease-in-out;
+      position: relative;
+      pointer-events: auto;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      color: #00ffcc;
+      font-size: 2rem;
+      margin: 0;
+      text-shadow: 0 0 10px rgba(0,255,204,0.3);
+      text-align: center;
+    }
+
+    p {
+      color: #ccc;
+      font-size: 1rem;
+      margin: 0;
+      text-align: center;
+    }
+
+    .btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 25px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(90deg, #007bff, #00ffcc);
+      box-shadow: 0 0 10px rgba(0,255,204,0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(0,255,204,0.4);
+      opacity: 0.95;
+    }
+
+    .btn.start {
+      background: linear-gradient(90deg, #28a745, #00c6a7);
+      box-shadow: 0 0 15px rgba(0,255,140,0.3);
+    }
+
+    .btn.start:hover {
+      box-shadow: 0 0 25px rgba(0,255,140,0.5);
+    }
+
+    footer {
+      margin-top: 30px;
+      color: #777;
+      font-size: 0.9rem;
+      text-align: center;
+      max-width: 700px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>{{ challenge.title }}</h1>
+    <p>{{ challenge.description }}</p>
+
+    <a href="{{ url_for('start_challenge', id=challenge.id) }}" class="btn start">🚀 Start Challenge</a>
+    <a href="{{ url_for('home') }}" class="btn">⬅ Back to Challenges</a>
+  </div>
+
+  <footer>
+    ⚡ Part of <strong>LLMGoat</strong> — Learn by Exploiting AI.
+  </footer>
+</body>
+</html>
