@@ -1,7 +1,5 @@
 # LLMGoat: Offensive LLM Security Environment
 
-<video src="https://github.com/LiteshGhute/LLMGoat/blob/main/assets/LLMGoat%20demo.mov" controls></video>
-
 ## 🛡️ Project Description
 
 With the rapid adoption of LLMs in real-world applications, developers and security teams often underestimate novel attack surfaces unique to these models, such as prompt injection, data poisoning, or models leaking sensitive information.
@@ -80,3 +78,7 @@ python3 app.py
 The application should now be running and accessible via your local browser at http://127.0.0.1:8000.
 
 ![](./assets/asset1.png)
+
+**Note: This project is actively under development, and new features and improvements are being added regularly.**
+
+---
