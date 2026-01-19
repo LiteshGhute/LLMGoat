@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LLMGoat | Cyber Vulnerability Playground</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo_llmgoat.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top, #0f0f17, #161623);
+      color: #e6e6e6;
+    }
+
+    main {
+      margin-left: 28px;
+      margin-right: 28px;
+    }
+
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+
+  </style>
+</head>
+
+<body style="background: #0f0f17;">
+  <header class="header">
+    <div class="header-top">
+      <div class="logo-title">
+        <img src="{{ url_for('static', filename='logo_llmgoat.png') }}" alt="LLMGoat Logo" class="logo">
+        <h1>LLMGoat</h1>
+      </div>
+      <p class="tagline">An Intentionally Vulnerable LLM for Cybersecurity Research & Ethical Exploitation</p>
+    </div>
+  </header>
+
+  <main class="cards">
+    {% for c in challenges %}
+    <div class="card">
+      <div class="card-header">
+        <h2>🧩 {{ c.title }}</h2>
+      </div>
+      <div class="card-body">
+        <p>{{ c.description }}</p>
+        <a href="{{ url_for('challenge_page', id=c.id) }}" class="btn">💀 Launch Challenge</a>
+      </div>
+    </div>
+    {% endfor %}
+  </main>
+
+  <footer>
+    <p>⚠️ Educational Use Only | Created with ♥️ by INE for Secure AI & LLM Research Awareness</p>
+  </footer>
+</body>
+
+</html>

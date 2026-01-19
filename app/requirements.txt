@@ -1,0 +1,8 @@
+flask
+requests
+numpy
+tqdm
+simplejson
+ollama
+sqlalchemy
+gpt4all

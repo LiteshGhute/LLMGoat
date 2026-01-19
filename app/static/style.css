@@ -1,0 +1,145 @@
+/* ======== BASE ======== */
+body {
+  font-family: 'Courier New', monospace;
+  background: radial-gradient(circle at top, #0a0a0f, #050507);
+  color: #e6e6e6;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Subtle moving cyber grid background */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(0deg, rgba(0,255,200,0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(0,255,200,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: moveGrid 15s linear infinite;
+  z-index: 0;
+}
+
+@keyframes moveGrid {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 40px 40px, 40px 40px; }
+}
+
+/* ======== HEADER ======== */
+.header {
+  background: linear-gradient(90deg, #0d0d10, #141a1f);
+  border-bottom: 2px solid #00ffc8;
+  box-shadow: 0 0 25px rgba(0, 255, 200, 0.15);
+  padding: 30px 20px 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.logo-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  line-height: 1;
+}
+
+.logo {
+  height: 55px;
+  width: auto;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 200, 0.6));
+}
+
+h1 {
+  font-size: 2.6em;
+  color: #00ffc8;
+  text-shadow: 0 0 10px rgba(0, 255, 200, 0.8);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  height: 65px;
+}
+
+.tagline {
+  color: #b3b3b3;
+  font-size: 1em;
+  margin-top: 15px;
+  text-align: center;
+}
+
+/* ======== CHALLENGE CARDS ======== */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+  padding: 60px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.card {
+  background: rgba(15, 17, 23, 0.95);
+  border: 1px solid rgba(0, 255, 200, 0.15);
+  border-radius: 15px;
+  width: 330px;
+  box-shadow: 0 0 15px rgba(0, 255, 200, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 255, 200, 0.4);
+}
+
+.card-header h2 {
+  color: #00ffc8;
+  font-size: 1.3em;
+  text-shadow: 0 0 8px rgba(0, 255, 200, 0.5);
+}
+
+.card-body {
+  padding: 15px 20px 25px;
+}
+
+.card-body p {
+  color: #c2c2c2;
+  font-size: 0.9em;
+  min-height: 60px;
+}
+
+/* ======== BUTTON ======== */
+.btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: linear-gradient(90deg, #00ffc8, #007bff);
+  background: linear-gradient(90deg, #007bff, #00ffcc);
+  color: black;
+  font-weight: bold;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  box-shadow: 0 0 20px rgba(0, 255, 200, 0.6);
+  transform: scale(1.05);
+}
+
+/* ======== FOOTER ======== */
+footer {
+  background: #0a0a0f;
+  padding: 20px;
+  font-size: 0.9em;
+  color: #808080;
+  border-top: 1px solid #00ffc8;
+  position: relative;
+  z-index: 1;
+}
