@@ -6,7 +6,7 @@ from gpt4all import Embed4All
 import requests
 
 # Initialize embedder once
-embedder = Embed4All(allow_download=False)
+embedder = Embed4All()
 
 # --- File parsing & embeddings ---
 def parse_file(filename):

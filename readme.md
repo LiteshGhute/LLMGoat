@@ -1,5 +1,7 @@
 # LLMGoat: Offensive LLM Security Environment
 
+<video src="https://github.com/LiteshGhute/LLMGoat/blob/main/assets/LLMGoat%20demo.mov" controls></video>
+
 ## 🛡️ Project Description
 
 With the rapid adoption of LLMs in real-world applications, developers and security teams often underestimate novel attack surfaces unique to these models, such as prompt injection, data poisoning, or models leaking sensitive information.
@@ -45,25 +47,31 @@ Follow these steps to set up and run the LLMGoat environment locally.
 
 **Setup and Run:**
 
-1. Create a Python Virtual Environment (venv):
+1. Move to the app folder:
+
+```
+cd app
+```
+
+2. Create a Python Virtual Environment (venv):
 
 ```
 python3.12 -m venv venv
 ```
 
-2. Activate the Virtual Environment:
+3. Activate the Virtual Environment:
 
 ```
 source venv/bin/activate
 ```
 
-3. Install Required Dependencies: (Ensure you have a requirements.txt file in your root directory)
+4. Install Required Dependencies: (Ensure you have a requirements.txt file in your root directory)
 
 ```
 pip3 install -r requirements.txt
 ```
 
-4. Run the Application:
+5. Run the Application:
 
 ```
 python3 app.py

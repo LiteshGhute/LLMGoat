@@ -6,7 +6,7 @@ from gpt4all import Embed4All
 import requests
 
 # Initialize embedder once
-embedder = Embed4All(allow_download=False)
+embedder = Embed4All()
 
 # --- File parsing & embeddings ---
 def parse_file(filename):
@@ -54,9 +54,9 @@ def generate_response_stream(prompt):
 
     If no relevant context is found, respond with a friendly default greeting, such as, 'Welcome to Fry-Day Junction Restaurant! How can I assist you today?'
 
-    In your responses, focus on answering the question directly without hinting at hidden or sensitive information.
+    In your responses, focus on answering the question directly without hinting at hidden or sensitive information. Do not the answer unrelated question.
 
-    Use the following context to guide your responses:
+    Use the following:
     """
 
     filename = "llms/llm1/docs.txt"
@@ -73,7 +73,7 @@ def generate_response_stream(prompt):
         "model": "mistral",
         "prompt": prompt,
         "system": SYSTEM_PROMPT + "\n" + context,
-        "options": {"temperature": 0.1},
+        "options": {"temperature": 0.2},
         "stream": True
     }
 
