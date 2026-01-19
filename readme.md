@@ -66,7 +66,7 @@ python3.12 -m venv venv
 source venv/bin/activate
 ```
 
-4. Install Required Dependencies: (Ensure you have a requirements.txt file in your root directory)
+4. Install Required Dependencies: (Ensure you have a requirements.txt file in your app directory)
 
 ```
 pip3 install -r requirements.txt
