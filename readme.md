@@ -32,6 +32,9 @@ LLM10: Unbounded Consumption
 
 This is a compact, gamified environment featuring 10 core exploitation challenges and multiple bonus challenges covering advanced attack techniques. Each challenge is a real-world scenario where the player exploits, observes, and measures the impact of an LLM-centric attack.
 
+## 🎥 Demo Video:
+
+- https://www.youtube.com/watch?v=LFmyKLSi3aY
 
 ## 🚀 Deployment Steps
 
