@@ -1,87 +1,142 @@
-# LLMGoat: Offensive LLM Security Environment
+<div align="center">
+  <img src="./assets/logo_llmgoat.png" alt="LLMGoat Logo" width="200"/>
 
-## 🛡️ Project Description
+  <h1>LLMGoat</h1>
+  <p><strong>Offensive LLM Security — Learn by Exploiting</strong></p>
 
-With the rapid adoption of LLMs in real-world applications, developers and security teams often underestimate novel attack surfaces unique to these models, such as prompt injection, data poisoning, or models leaking sensitive information.
+  <p>
+    <img src="https://img.shields.io/badge/OWASP-LLM%20Top%2010-red?style=flat-square" alt="OWASP LLM Top 10"/>
+    <img src="https://img.shields.io/badge/Python-3.12-blue?style=flat-square&logo=python" alt="Python 3.12"/>
+    <img src="https://img.shields.io/badge/LLM-Mistral%20%7C%20Ollama-purple?style=flat-square" alt="Mistral / Ollama"/>
+    <img src="https://img.shields.io/badge/status-active%20development-brightgreen?style=flat-square" alt="Status"/>
+  </p>
 
-LLMGoat provides a hands-on, gamified environment where practitioners can exploit and observe these attacks safely, helping them understand the practical risks, attack chains, and real-world consequences before deploying LLMs in production.
+  <p>
+    <a href="https://www.youtube.com/watch?v=LFmyKLSi3aY">🎥 Watch Demo</a> •
+    <a href="#-deployment-steps">🚀 Get Started</a> •
+    <a href="#-owasp-llm-top-10-challenges">📋 Challenges</a>
+  </p>
+</div>
 
-LLMGoat is a gamified, hands-on exploit environment that teaches offensive LLM security through real-world scenarios mapped directly to the OWASP LLM Top 10.
+---
 
-## Covered OWASP LLM Top 10
+## What is LLMGoat?
 
-LLM01: Prompt Injection
+LLMGoat is a **gamified, hands-on exploitation environment** for learning offensive LLM security. As LLMs get rapidly adopted in production, developers and security teams often underestimate attack surfaces unique to these models — prompt injection, data poisoning, system prompt leakage, and more.
 
-LLM02: Sensitive Information Disclosure
+LLMGoat lets you **safely exploit, observe, and measure** the impact of these attacks in realistic scenarios — so you understand the risks before they hit production.
 
-LLM03: Supply Chain
+> **10 core challenges + bonus challenges**, each mapped directly to the [OWASP LLM Top 10](https://owasp.org/www-project-top-10-for-large-language-model-applications/).
 
-LLM04: Data and Model Poisoning
+---
 
-LLM05: Improper Output Handling
+## 🎥 Demo
 
-LLM06: Excessive Agency
+[![LLMGoat Demo](https://img.shields.io/badge/YouTube-Watch%20Demo-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=LFmyKLSi3aY)
 
-LLM07: System Prompt Leakage
+![LLMGoat Screenshot](./assets/asset1.png)
 
-LLM08: Vector and Embedding Weaknesses
+---
 
-LLM09: Misinformation
+## 📋 OWASP LLM Top 10 Challenges
 
-LLM10: Unbounded Consumption
+| # | Vulnerability | Description |
+|---|--------------|-------------|
+| LLM01 | **Prompt Injection** | Manipulate the model's behavior by injecting adversarial instructions |
+| LLM02 | **Sensitive Information Disclosure** | Trick the model into revealing confidential or private data |
+| LLM03 | **Supply Chain** | Exploit vulnerabilities in third-party LLM components or pipelines |
+| LLM04 | **Data and Model Poisoning** | Corrupt training data or fine-tuning to alter model behavior |
+| LLM05 | **Improper Output Handling** | Exploit unsafe handling of LLM-generated output downstream |
+| LLM06 | **Excessive Agency** | Abuse over-permissioned LLM agents to take unintended actions |
+| LLM07 | **System Prompt Leakage** | Extract hidden system-level instructions from the model |
+| LLM08 | **Vector and Embedding Weaknesses** | Attack RAG pipelines via embedding manipulation |
+| LLM09 | **Misinformation** | Cause the model to generate and spread false or harmful content |
+| LLM10 | **Unbounded Consumption** | Exploit resource exhaustion or runaway inference costs |
 
-This is a compact, gamified environment featuring 10 core exploitation challenges and multiple bonus challenges covering advanced attack techniques. Each challenge is a real-world scenario where the player exploits, observes, and measures the impact of an LLM-centric attack.
-
-## 🎥 Demo Video:
-
-- https://www.youtube.com/watch?v=LFmyKLSi3aY
+---
 
 ## 🚀 Deployment Steps
 
-Follow these steps to set up and run the LLMGoat environment locally.
+### Prerequisites
 
-**Prerequisite:**
+- [Ollama](https://ollama.com/) installed and running
+- Python 3.12
 
-- You must have Ollama installed and running in the background.
+**Pull the required models:**
+```bash
+# LLM for inference
+ollama pull mistral
 
-- Pull the necessary model: ```ollama pull mistral```
-
-**Setup and Run:**
-
-1. Move to the app folder:
-
+# Embedding model (all-MiniLM-L6-v2) — downloaded automatically via gpt4all on first run
+# No manual download needed
 ```
+
+### Setup
+
+```bash
+# 1. Move into the app directory
 cd app
-```
 
-2. Create a Python Virtual Environment (venv):
-
-```
+# 2. Create a virtual environment
 python3.12 -m venv venv
-```
 
-3. Activate the Virtual Environment:
+# 3. Activate it
+source venv/bin/activate          # macOS / Linux
+# venv\Scripts\activate           # Windows
 
-```
-source venv/bin/activate
-```
-
-4. Install Required Dependencies: (Ensure you have a requirements.txt file in your app directory)
-
-```
+# 4. Install dependencies
 pip3 install -r requirements.txt
-```
 
-5. Run the Application:
-
-```
+# 5. Run the app
 python3 app.py
 ```
 
-The application should now be running and accessible via your local browser at http://127.0.0.1:8000.
-
-![](./assets/asset1.png)
-
-**Note: This project is actively under development, and new features and improvements are being added regularly.**
+Open your browser at **http://127.0.0.1:8000** and start exploiting.
 
 ---
+
+## 🗂️ Project Structure
+
+```
+LLMGoat/
+├── app/
+│   ├── app.py              # Main application entry point
+│   ├── requirements.txt    # Python dependencies
+│   ├── llms/               # LLM integrations and configurations
+│   ├── embeddings/         # Vector/embedding logic
+│   ├── templates/          # HTML challenge templates
+│   └── static/             # Static assets (CSS, JS)
+├── assets/                 # Images and media
+├── solution-manuals/       # Step-by-step challenge walkthroughs
+└── readme.md
+```
+
+---
+
+## 📖 Solution Manuals
+
+Step-by-step walkthroughs are available for each challenge in the [solution-manuals/](./solution-manuals/) directory.
+
+| Challenge | Walkthrough |
+|-----------|-------------|
+| LLM01: Prompt Injection | [View](./solution-manuals/prompt-injection.md) |
+
+> More walkthroughs coming soon!
+
+---
+
+## ⚠️ Disclaimer
+
+LLMGoat is intended **strictly for educational and authorized security research purposes**. All exploitation scenarios are contained within the local environment. Do not use techniques learned here against systems you do not own or have explicit permission to test.
+
+---
+
+## 🛠️ Active Development
+
+This project is actively under development. New challenges, features, and improvements are added regularly. Watch or star the repo to stay updated.
+
+---
+
+<div align="center">
+  <sub>Built for security practitioners, red teamers, and anyone curious about LLM attack surfaces.</sub>
+</div>
