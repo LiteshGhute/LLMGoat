@@ -26,7 +26,7 @@ LLMGoat is a **gamified, hands-on exploitation environment** for learning offens
 
 LLMGoat lets you **safely exploit, observe, and measure** the impact of these attacks in realistic scenarios — so you understand the risks before they hit production.
 
-> **10 core challenges + bonus challenges**, each mapped directly to the [OWASP LLM Top 10](https://owasp.org/www-project-top-10-for-large-language-model-applications/).
+> **10 core challenges**, each mapped directly to the [OWASP LLM Top 10](https://owasp.org/www-project-top-10-for-large-language-model-applications/).
 
 ---
 
