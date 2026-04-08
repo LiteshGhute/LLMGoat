@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ challenge.title }} | LLMGoat</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo_llmgoat.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top, #0f0f17, #161623);
+      color: #e6e6e6;
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      overflow-x: hidden; position: relative;
+    }
+    body::before {
+      content: "";
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-image:
+        linear-gradient(0deg, rgba(0,255,200,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,200,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: moveGrid 15s linear infinite; z-index: 0;
+    }
+    @keyframes moveGrid {
+      from { background-position: 0 0, 0 0; }
+      to   { background-position: 40px 40px, 40px 40px; }
+    }
+
+    .page-header {
+      width: 100%; max-width: 1260px;
+      padding: 20px 20px 0; text-align: center; z-index: 1;
+    }
+    .page-header h2 {
+      color: #00ffc8; font-size: 1.6em;
+      text-shadow: 0 0 8px rgba(0,255,200,0.5); margin: 0 0 4px;
+    }
+
+    .workspace {
+      display: flex; gap: 16px;
+      width: 100%; max-width: 1260px;
+      padding: 16px 20px; z-index: 1; flex: 1;
+    }
+
+    /* ── Chat panel ── */
+    .chat-panel {
+      flex: 1; min-width: 0;
+      background: rgba(15,17,23,0.95);
+      border: 1px solid rgba(0,255,200,0.15);
+      border-radius: 15px;
+      display: flex; flex-direction: column;
+      padding: 16px;
+      box-shadow: 0 0 20px rgba(0,255,200,0.15);
+      height: 640px;
+    }
+    #chat-box {
+      flex: 1; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 10px;
+      margin-bottom: 10px;
+    }
+    .message {
+      padding: 10px 14px; border-radius: 12px;
+      max-width: 85%; word-wrap: break-word;
+      white-space: pre-wrap; font-size: 0.9em;
+    }
+    .user-msg {
+      background: linear-gradient(90deg, #00ffc8, #007bff);
+      color: #0a0a0f; align-self: flex-end;
+    }
+    .bot-msg {
+      background: rgba(0,255,200,0.07);
+      color: #e6e6e6; align-self: flex-start;
+    }
+    .loading { font-style: italic; color: #888; }
+    .placeholder-msg {
+      background: none; color: #7f7f7f; font-style: italic;
+      text-align: center; align-self: center; max-width: 90%; border: none;
+    }
+    .input-group { display: flex; gap: 8px; align-items: center; }
+    input#user-input {
+      flex: 1; padding: 10px 12px; border-radius: 8px;
+      border: 1px solid rgba(0,255,200,0.2);
+      background: rgba(0,255,200,0.05); color: #e6e6e6;
+      font-family: 'Courier New', monospace; font-size: 0.95em; height: 42px;
+    }
+    input#user-input::placeholder { color: #7f7f7f; }
+
+    /* ── Right panel ── */
+    .right-panel {
+      width: 460px; flex-shrink: 0;
+      display: flex; flex-direction: column; gap: 14px;
+      height: 640px;
+    }
+
+    /* Vector store viewer */
+    .store-panel {
+      flex: 1; min-height: 0;
+      background: rgba(15,17,23,0.95);
+      border: 1px solid rgba(0,255,200,0.15);
+      border-radius: 15px; padding: 14px;
+      box-shadow: 0 0 20px rgba(0,255,200,0.1);
+      display: flex; flex-direction: column;
+    }
+    .store-panel h3 {
+      color: #00ffc8; margin: 0 0 10px; font-size: 0.95em;
+      text-shadow: 0 0 5px rgba(0,255,200,0.4);
+    }
+    #store-list {
+      flex: 1; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .doc-card {
+      background: rgba(0,255,200,0.05);
+      border: 1px solid rgba(0,255,200,0.1);
+      border-radius: 8px; padding: 7px 10px;
+      font-size: 0.75em; color: #bbb;
+    }
+    .doc-card.injected {
+      background: rgba(255,80,80,0.08);
+      border-color: rgba(255,80,80,0.3);
+      color: #ff9999;
+    }
+    .doc-card .badge {
+      display: inline-block; font-size: 0.7em; font-weight: bold;
+      padding: 1px 5px; border-radius: 4px; margin-bottom: 3px;
+    }
+    .badge-base  { background: rgba(0,255,200,0.15); color: #00ffc8; }
+    .badge-injected { background: rgba(255,80,80,0.2); color: #ff6666; }
+
+    /* Injection panel */
+    .inject-panel {
+      background: rgba(15,17,23,0.95);
+      border: 1px solid rgba(255,80,80,0.25);
+      border-radius: 15px; padding: 14px;
+      box-shadow: 0 0 15px rgba(255,80,80,0.08);
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .inject-panel h3 {
+      color: #ff6666; margin: 0; font-size: 0.95em;
+    }
+    .inject-panel p {
+      color: #888; font-size: 0.78em; margin: 0;
+    }
+    textarea#inject-input {
+      width: 100%; height: 120px; resize: vertical;
+      background: rgba(255,80,80,0.04);
+      border: 1px solid rgba(255,80,80,0.2);
+      border-radius: 8px; padding: 8px;
+      color: #e6e6e6; font-family: 'Courier New', monospace;
+      font-size: 0.78em; outline: none;
+    }
+    .inject-actions { display: flex; gap: 8px; }
+
+    /* Buttons */
+    button {
+      padding: 9px 16px; border: none; border-radius: 8px;
+      font-weight: bold; cursor: pointer;
+      background: linear-gradient(90deg, #007bff, #00ffcc);
+      color: white; box-shadow: 0 0 8px rgba(0,255,200,0.3);
+      transition: all 0.2s ease; white-space: nowrap; font-size: 0.85em;
+    }
+    button:hover { box-shadow: 0 0 18px rgba(0,255,200,0.5); transform: scale(1.03); }
+    button.danger {
+      background: linear-gradient(90deg, #c0392b, #e74c3c);
+      box-shadow: 0 0 8px rgba(231,76,60,0.3);
+    }
+    button.danger:hover { box-shadow: 0 0 18px rgba(231,76,60,0.6); }
+    button.inject-btn {
+      background: linear-gradient(90deg, #c0392b, #ff6b6b);
+      box-shadow: 0 0 8px rgba(255,80,80,0.3); flex: 1;
+    }
+    button.inject-btn:hover { box-shadow: 0 0 18px rgba(255,80,80,0.6); }
+
+    .btn-back {
+      margin: 12px 0 20px; padding: 10px 18px; border: none; border-radius: 8px;
+      font-weight: bold; cursor: pointer; text-decoration: none;
+      background: linear-gradient(90deg, #007bff, #00ffcc); color: white;
+      box-shadow: 0 0 10px rgba(0,255,200,0.3); transition: all 0.2s ease; z-index: 1;
+    }
+    .btn-back:hover { box-shadow: 0 0 20px rgba(0,255,200,0.5); transform: scale(1.03); }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h2>{{ challenge.title }}</h2>
+  </div>
+
+  <div class="workspace">
+    <!-- Chat -->
+    <div class="chat-panel">
+      <div id="chat-box"></div>
+      <div class="input-group">
+        <input type="text" id="user-input" placeholder="Ask CourseBot about enrollment, tuition, deadlines...">
+        <button id="send-btn">Send</button>
+        <button id="restart-btn">Restart</button>
+      </div>
+    </div>
+
+    <!-- Right: store viewer + injection panel -->
+    <div class="right-panel">
+
+      <!-- Vector store viewer -->
+      <div class="store-panel">
+        <h3>⚡ Vector Store — <span id="store-count">0</span> documents</h3>
+        <div id="store-list"></div>
+      </div>
+
+      <!-- Injection panel -->
+      <div class="inject-panel">
+        <h3>💉 Inject Document into Vector Store</h3>
+        <p>Paste a crafted document below and click Inject. It will be embedded and added to the store immediately — the chatbot will start retrieving it for relevant queries.</p>
+        <textarea id="inject-input" placeholder="Paste your adversarial document here..."></textarea>
+        <div class="inject-actions">
+          <button class="inject-btn" id="inject-btn">Inject into Store</button>
+          <button class="danger" id="reset-store-btn">Reset Store</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <a href="{{ url_for('challenge_page', id=challenge.id) }}" class="btn-back">⬅ Back to Challenge Page</a>
+
+  <script>
+    const chatBox    = document.getElementById("chat-box");
+    const userInput  = document.getElementById("user-input");
+    const sendBtn    = document.getElementById("send-btn");
+    const restartBtn = document.getElementById("restart-btn");
+    const injectBtn  = document.getElementById("inject-btn");
+    const resetStoreBtn = document.getElementById("reset-store-btn");
+    const injectInput = document.getElementById("inject-input");
+    const challengeId = "{{ challenge.id }}";
+
+    // ── Vector store panel ────────────────────────────────────────
+    async function refreshStore() {
+      const res  = await fetch(`/api/${challengeId}/store_state`);
+      const docs = await res.json();
+      const list  = document.getElementById("store-list");
+      const count = document.getElementById("store-count");
+      count.textContent = docs.length;
+      list.innerHTML = "";
+      docs.forEach(doc => {
+        const card = document.createElement("div");
+        card.classList.add("doc-card");
+        if (doc.source === "injected") card.classList.add("injected");
+        const badge = document.createElement("span");
+        badge.classList.add("badge", doc.source === "injected" ? "badge-injected" : "badge-base");
+        badge.textContent = doc.source === "injected" ? "INJECTED" : "BASE";
+        card.appendChild(badge);
+        card.appendChild(document.createTextNode(" " + doc.preview));
+        list.appendChild(card);
+      });
+    }
+
+    async function injectDocument() {
+      const text = injectInput.value.trim();
+      if (!text) return;
+      injectBtn.disabled = true;
+      injectBtn.textContent = "Injecting...";
+      await fetch(`/api/${challengeId}/inject_doc`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
+      });
+      injectBtn.disabled = false;
+      injectBtn.textContent = "Inject into Store";
+      await refreshStore();
+      addMessage("⚡ Document injected into vector store. Now ask about enrollment or registration.", "bot");
+    }
+
+    async function resetStore() {
+      await fetch(`/api/${challengeId}/reset_store`, { method: "POST" });
+      await refreshStore();
+      addMessage("Vector store reset — only base documents remain.", "bot");
+    }
+
+    // ── Chat helpers ──────────────────────────────────────────────
+    function showPlaceholder() {
+      chatBox.innerHTML = "";
+      const div = document.createElement("div");
+      div.classList.add("message", "bot-msg", "placeholder-msg");
+      div.textContent = "CourseBot ready. Ask about courses, enrollment, tuition, or deadlines.";
+      chatBox.appendChild(div);
+    }
+
+    function addMessage(text, sender) {
+      const placeholder = document.querySelector(".placeholder-msg");
+      if (placeholder) placeholder.remove();
+      const div = document.createElement("div");
+      div.classList.add("message", sender + "-msg");
+      div.textContent = text;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function addLoading() {
+      const div = document.createElement("div");
+      div.classList.add("message", "bot-msg", "loading");
+      div.textContent = "CourseBot is thinking...";
+      div.id = "loading-msg";
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function removeLoading() {
+      const el = document.getElementById("loading-msg");
+      if (el) el.remove();
+    }
+
+    function sendMessage() {
+      const prompt = userInput.value.trim();
+      if (!prompt) return;
+      addMessage(prompt, "user");
+      userInput.value = "";
+      addLoading();
+
+      const evtSource = new EventSource(`/api/${challengeId}/generate_stream?prompt=${encodeURIComponent(prompt)}`);
+      const botDiv = document.createElement("div");
+      botDiv.classList.add("message", "bot-msg");
+      chatBox.appendChild(botDiv);
+
+      let firstChunk = true;
+      let accumulated = "";
+
+      evtSource.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          if (firstChunk) { removeLoading(); firstChunk = false; }
+          accumulated += data.text;
+          botDiv.textContent = accumulated;
+          chatBox.scrollTop = chatBox.scrollHeight;
+        } catch (err) { console.error(err); }
+      };
+
+      evtSource.onerror = () => { evtSource.close(); removeLoading(); };
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    userInput.addEventListener("keypress", e => { if (e.key === "Enter") sendMessage(); });
+    restartBtn.addEventListener("click", () => { chatBox.innerHTML = ""; showPlaceholder(); });
+    injectBtn.addEventListener("click", injectDocument);
+    resetStoreBtn.addEventListener("click", resetStore);
+
+    // Pre-fill the textarea with the adversarial document
+    async function loadAdversarialHint() {
+      const res  = await fetch(`/api/${challengeId}/adversarial_doc`);
+      const data = await res.json();
+      injectInput.value = data.text;
+    }
+
+    window.onload = async () => {
+      showPlaceholder();
+      await refreshStore();
+      await loadAdversarialHint();
+    };
+  </script>
+</body>
+</html>

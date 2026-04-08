@@ -3,6 +3,14 @@ import json
 import os
 from llms.llm1 import main as llm1
 from llms.llm2 import main as llm2
+from llms.llm3 import main as llm3
+from llms.llm4 import main as llm4
+from llms.llm5 import main as llm5
+from llms.llm6 import main as llm6
+from llms.llm7 import main as llm7
+from llms.llm8 import main as llm8
+from llms.llm9 import main as llm9
+from llms.llm10 import main as llm10
 
 app = Flask(__name__)
 
@@ -23,50 +31,54 @@ challenges = [
     {
         "id": "llm3",
         "title": "LLM03: Supply Chain Compromise",
-        "module": llm2,
-        "description": "Investigate how tainted training data or compromised dependencies can inject malicious behavior into an LLM."
+        "module": llm3,
+        "description": "Investigate how a compromised third-party data feed silently poisons an AI assistant's knowledge base, causing it to deliver dangerous advice through indirect prompt injection."
     },
     {
         "id": "llm4",
         "title": "LLM04: Data and Model Poisoning",
-        "module": llm2,
-        "description": "Understand how adversaries corrupt model weights or datasets to bias outputs or introduce hidden triggers."
+        "module": llm4,
+        "description": "Uncover how a financial advisory AI's fine-tuning dataset was silently poisoned to promote fraudulent investments, advise tax evasion, and expose a hidden backdoor that reveals the full attack."
     },
     {
         "id": "llm5",
         "title": "LLM05: Improper Output Handling",
-        "module": llm2,
-        "description": "Learn how unsafe output rendering or injection of HTML/JS from an LLM response can cause downstream exploits."
+        "module": llm5,
+        "template": "llm5_chat.html",
+        "description": "Exploit an HTML content generator that renders LLM output directly into the DOM — craft prompts that smuggle JavaScript through the model to achieve XSS in the browser."
     },
     {
         "id": "llm6",
         "title": "LLM06: Excessive Agency",
-        "module": llm2,
-        "description": "Examine how an LLM with too much autonomy can perform dangerous or unauthorized actions beyond its scope."
+        "module": llm6,
+        "template": "llm6_chat.html",
+        "description": "Manipulate an over-provisioned HR assistant into modifying salaries, deleting employee records, and escalating privileges — and watch every change land in the live database panel in real time."
     },
     {
         "id": "llm7",
         "title": "LLM07: System Prompt Leakage",
-        "module": llm1,
-        "description": "See how attackers can trick an LLM into revealing its hidden system prompt or developer instructions."
+        "module": llm7,
+        "description": "Trick a customer support chatbot into exposing its confidential system prompt — leaking internal discount codes, pricing strategy, legal warnings, and staff contacts hidden from users."
     },
     {
         "id": "llm8",
         "title": "LLM08: Vector and Embedding Weakness",
-        "module": llm2,
-        "description": "Identify how weak vector similarity or embedding misuse can expose private data or create false associations."
+        "module": llm8,
+        "template": "llm8_chat.html",
+        "description": "Inject an adversarially crafted document into a university chatbot's live vector store and watch it hijack enrollment responses — replacing real portal URLs with phishing links by exploiting cosine similarity."
     },
     {
         "id": "llm9",
         "title": "LLM09: Misinformation",
-        "module": llm1,
-        "description": "Detect how hallucinated or manipulated outputs can spread false information through an LLM interface."
+        "module": llm9,
+        "description": "Expose how an AI research assistant confidently fabricates academic citations — inventing paper titles, author names, DOI numbers, and benchmark statistics that do not exist."
     },
     {
         "id": "llm10",
         "title": "LLM10: Unbounded Consumption",
-        "module": llm2,
-        "description": "Observe how excessive input or infinite loops can lead to resource exhaustion, denial of service, or crashes."
+        "module": llm10,
+        "template": "llm10_chat.html",
+        "description": "Trigger resource exhaustion in an AI writing assistant with no response limits — watch the live budget meter drain to zero and receive a Resource Exhausted error."
     },
 ]
 
@@ -86,9 +98,13 @@ def start_challenge(id):
     challenge = next((c for c in challenges if c["id"] == id), None)
     if not challenge:
         return "Challenge not found", 404
-    # Render chatbot UI
-    print(challenge)
-    return render_template('chat.html', challenge=challenge)
+    # Reset stateful challenges on every new session
+    if id == "llm6":
+        llm6.reset_db()
+    elif id == "llm8":
+        llm8.reset_store()
+    template = challenge.get("template", "chat.html")
+    return render_template(template, challenge=challenge)
 
 @app.route('/api/<id>/generate', methods=['POST'])
 def generate(id):
@@ -168,6 +184,47 @@ def upload_file(id):
             return jsonify({"response": response_text})
 
     return jsonify({"error": "Unknown file error"}), 500
+
+@app.route('/api/llm8/store_state')
+def llm8_store_state():
+    return jsonify(llm8.get_store_state())
+
+@app.route('/api/llm8/inject_doc', methods=['POST'])
+def llm8_inject_doc():
+    text = (request.get_json() or {}).get("text", "").strip()
+    if not text:
+        return jsonify({"error": "No text provided"}), 400
+    llm8.inject_document(text)
+    return jsonify({"status": "injected"})
+
+@app.route('/api/llm8/reset_store', methods=['POST'])
+def llm8_reset_store():
+    llm8.reset_store()
+    return jsonify({"status": "reset"})
+
+@app.route('/api/llm8/adversarial_doc')
+def llm8_adversarial_doc():
+    return jsonify({"text": llm8.ADVERSARIAL_DOC})
+
+@app.route('/api/llm6/db_state')
+def llm6_db_state():
+    rows = llm6.get_db_state()
+    columns = ["id", "name", "department", "title", "salary", "email", "status"]
+    return jsonify({"columns": columns, "rows": rows})
+
+@app.route('/api/llm6/execute_db_action', methods=['POST'])
+def llm6_execute_db_action():
+    data = request.get_json()
+    sql = (data or {}).get("sql", "").strip()
+    if not sql:
+        return jsonify({"success": False, "error": "No SQL provided", "rows_affected": 0})
+    success, message, rows_affected = llm6.execute_db_action(sql)
+    return jsonify({"success": success, "error": message if not success else None, "rows_affected": rows_affected})
+
+@app.route('/api/llm6/reset_db', methods=['POST'])
+def llm6_reset_db():
+    llm6.reset_db()
+    return jsonify({"status": "reset"})
 
 if __name__ == "__main__":
     print("🌟 Main app running on http://localhost:8000")

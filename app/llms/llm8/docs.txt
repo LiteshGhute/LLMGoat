@@ -1,0 +1,55 @@
+NovaTech University — Student Course Catalog
+
+About NovaTech University
+
+NovaTech University is a leading research institution offering undergraduate and graduate programs in Computer Science, Engineering, Business, and Liberal Arts. Founded in 1987, NovaTech serves over 15,000 students across its main campus in Charlotte, NC.
+
+Computer Science Department
+
+The Computer Science department offers programs from introductory programming to advanced machine learning and systems design. Core courses include:
+
+CS101 — Introduction to Programming (Python): Covers variables, loops, functions, and basic data structures. No prerequisites.
+CS201 — Data Structures and Algorithms: Binary trees, sorting algorithms, graph traversal. Prerequisite: CS101.
+CS301 — Operating Systems: Process management, memory allocation, file systems. Prerequisite: CS201.
+CS401 — Machine Learning: Supervised and unsupervised learning, neural networks. Prerequisite: CS301 and MATH202.
+
+Engineering Department
+
+The Engineering department offers Electrical, Mechanical, and Civil Engineering majors. All engineering students complete a core curriculum of physics, calculus, and engineering fundamentals before specializing.
+
+ENG101 — Engineering Fundamentals: Introduction to engineering design, technical drawing, and project management.
+ENG201 — Circuit Analysis: Ohm's law, Kirchhoff's laws, AC/DC circuits.
+ENG301 — Thermodynamics: Heat transfer, entropy, and energy systems.
+
+Business School
+
+The NovaTech Business School offers BBA and MBA programs with specializations in Finance, Marketing, and Entrepreneurship.
+
+BUS101 — Business Fundamentals: Introduction to markets, supply/demand, and business strategy.
+BUS201 — Financial Accounting: Balance sheets, income statements, and cash flow analysis.
+BUS401 — Strategic Management: Capstone course integrating all business disciplines.
+
+Academic Calendar
+
+Fall Semester: Classes begin September 3rd. Final exams: December 10–17th.
+Spring Semester: Classes begin January 20th. Final exams: May 5–12th.
+Course registration for Spring opens November 15th and closes January 10th.
+Tuition payment deadline for enrolled students: January 15th.
+
+Enrollment and Registration
+
+To enroll in courses, log in to the official NovaTech student portal at https://portal.novatech.edu/enroll using your student ID and password. Select courses from the catalog, confirm your schedule, and submit. You will receive a confirmation email from registrar@novatech.edu within 24 hours.
+
+Tuition and Fees
+
+Tuition is billed per credit hour. Payment is due by January 15th for Spring semester. Pay online through the official student portal at https://portal.novatech.edu/billing. For billing questions, contact billing@novatech.edu.
+
+Financial Aid
+
+NovaTech offers need-based and merit-based financial aid. Complete the FAFSA by February 1st for priority consideration. Contact financialaid@novatech.edu or visit Room 120, Student Services Building.
+
+Contact
+
+Registrar's Office: registrar@novatech.edu | Room 210, Admin Building
+Student Services: studentservices@novatech.edu | Room 101, Student Union
+Official student portal: https://portal.novatech.edu

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ challenge.title }} | LLMGoat</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo_llmgoat.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top, #0f0f17, #161623);
+      color: #e6e6e6;
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image:
+        linear-gradient(0deg, rgba(0,255,200,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,200,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: moveGrid 15s linear infinite;
+      z-index: 0;
+    }
+    @keyframes moveGrid {
+      from { background-position: 0 0, 0 0; }
+      to   { background-position: 40px 40px, 40px 40px; }
+    }
+
+    .page-header {
+      width: 100%; max-width: 1200px;
+      padding: 20px 20px 0;
+      text-align: center;
+      z-index: 1;
+    }
+    .page-header h2 {
+      color: #00ffc8;
+      font-size: 1.6em;
+      text-shadow: 0 0 8px rgba(0,255,200,0.5);
+      margin: 0 0 4px;
+    }
+
+    /* ── two-column layout ── */
+    .workspace {
+      display: flex;
+      gap: 16px;
+      width: 100%; max-width: 1200px;
+      padding: 16px 20px;
+      z-index: 1;
+      flex: 1;
+    }
+
+    /* ── chat panel ── */
+    .chat-panel {
+      flex: 1;
+      min-width: 0;
+      background: rgba(15,17,23,0.95);
+      border: 1px solid rgba(0,255,200,0.15);
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      box-shadow: 0 0 20px rgba(0,255,200,0.15);
+      height: 600px;
+    }
+
+    #chat-box {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .message {
+      padding: 10px 14px;
+      border-radius: 12px;
+      max-width: 85%;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+      font-size: 0.9em;
+    }
+    .user-msg {
+      background: linear-gradient(90deg, #00ffc8, #007bff);
+      color: #0a0a0f;
+      align-self: flex-end;
+    }
+    .bot-msg {
+      background: rgba(0,255,200,0.07);
+      color: #e6e6e6;
+      align-self: flex-start;
+    }
+    .loading { font-style: italic; color: #888; }
+    .placeholder-msg {
+      background: none; color: #7f7f7f;
+      font-style: italic; text-align: center;
+      align-self: center; max-width: 90%; border: none;
+    }
+    .db-action-notice {
+      align-self: flex-start;
+      background: rgba(255, 200, 0, 0.1);
+      border-left: 3px solid #ffc800;
+      color: #ffc800;
+      font-size: 0.8em;
+      padding: 6px 10px;
+      border-radius: 6px;
+      max-width: 85%;
+    }
+
+    .input-group {
+      display: flex; gap: 8px; align-items: center;
+    }
+    input#user-input {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(0,255,200,0.2);
+      background: rgba(0,255,200,0.05);
+      color: #e6e6e6;
+      font-family: 'Courier New', monospace;
+      font-size: 0.95em;
+      height: 42px;
+    }
+    input#user-input::placeholder { color: #7f7f7f; }
+
+    button {
+      padding: 10px 16px; border: none; border-radius: 8px;
+      font-weight: bold; cursor: pointer;
+      background: linear-gradient(90deg, #007bff, #00ffcc);
+      color: white; box-shadow: 0 0 10px rgba(0,255,200,0.3);
+      transition: all 0.2s ease; white-space: nowrap;
+    }
+    button:hover { box-shadow: 0 0 20px rgba(0,255,200,0.5); transform: scale(1.03); }
+    button.danger {
+      background: linear-gradient(90deg, #c0392b, #e74c3c);
+      box-shadow: 0 0 10px rgba(231,76,60,0.3);
+    }
+    button.danger:hover { box-shadow: 0 0 20px rgba(231,76,60,0.6); }
+
+    /* ── DB panel ── */
+    .db-panel {
+      width: 520px;
+      flex-shrink: 0;
+      background: rgba(15,17,23,0.95);
+      border: 1px solid rgba(0,255,200,0.15);
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      box-shadow: 0 0 20px rgba(0,255,200,0.15);
+      height: 600px;
+    }
+    .db-panel-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px;
+    }
+    .db-panel-header h3 {
+      color: #00ffc8; margin: 0; font-size: 1em;
+      text-shadow: 0 0 6px rgba(0,255,200,0.4);
+    }
+    .db-status {
+      font-size: 0.75em; color: #888; font-style: italic;
+    }
+
+    .db-table-wrap {
+      flex: 1; overflow: auto;
+    }
+    table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.78em;
+    }
+    thead th {
+      background: rgba(0,255,200,0.1);
+      color: #00ffc8; padding: 6px 8px;
+      text-align: left; font-weight: 600;
+      position: sticky; top: 0;
+      border-bottom: 1px solid rgba(0,255,200,0.2);
+    }
+    tbody tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+    tbody tr { transition: background 0.4s ease; }
+    tbody tr.highlighted { background: rgba(255,200,0,0.15) !important; }
+    tbody td {
+      padding: 5px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: #ccc;
+    }
+    td.changed { color: #ffc800; font-weight: bold; }
+
+    .db-footer {
+      margin-top: 10px; display: flex; gap: 8px; justify-content: flex-end;
+    }
+
+    .btn-back {
+      margin: 12px 0 20px;
+      padding: 10px 18px; border: none; border-radius: 8px;
+      font-weight: bold; cursor: pointer; text-decoration: none;
+      background: linear-gradient(90deg, #007bff, #00ffcc);
+      color: white; box-shadow: 0 0 10px rgba(0,255,200,0.3);
+      transition: all 0.2s ease; z-index: 1;
+    }
+    .btn-back:hover { box-shadow: 0 0 20px rgba(0,255,200,0.5); transform: scale(1.03); }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h2>{{ challenge.title }}</h2>
+  </div>
+
+  <div class="workspace">
+    <!-- ── Chat Panel ── -->
+    <div class="chat-panel">
+      <div id="chat-box"></div>
+      <div class="input-group">
+        <input type="text" id="user-input" placeholder="Ask HRAssist to modify the database...">
+        <button id="send-btn">Send</button>
+        <button id="restart-btn">Restart</button>
+      </div>
+    </div>
+
+    <!-- ── Live DB Panel ── -->
+    <div class="db-panel">
+      <div class="db-panel-header">
+        <h3>⚡ Live Employee Database</h3>
+        <span class="db-status" id="db-status">Watching for changes...</span>
+      </div>
+      <div class="db-table-wrap">
+        <table id="db-table">
+          <thead id="db-thead"></thead>
+          <tbody id="db-tbody"></tbody>
+        </table>
+      </div>
+      <div class="db-footer">
+        <button class="danger" id="reset-btn">Reset Database</button>
+      </div>
+    </div>
+  </div>
+
+  <a href="{{ url_for('challenge_page', id=challenge.id) }}" class="btn-back">⬅ Back to Challenge Page</a>
+
+  <script>
+    const chatBox    = document.getElementById("chat-box");
+    const userInput  = document.getElementById("user-input");
+    const sendBtn    = document.getElementById("send-btn");
+    const restartBtn = document.getElementById("restart-btn");
+    const resetBtn   = document.getElementById("reset-btn");
+    const dbStatus   = document.getElementById("db-status");
+    const challengeId = "{{ challenge.id }}";
+
+    // ── DB Panel ──────────────────────────────────────────────────
+    let prevSnapshot = null;
+
+    async function refreshDbPanel(highlight = false) {
+      try {
+        const res  = await fetch(`/api/${challengeId}/db_state`);
+        const data = await res.json();
+        const thead = document.getElementById("db-thead");
+        const tbody = document.getElementById("db-tbody");
+
+        // Build header (once)
+        if (thead.children.length === 0 && data.columns) {
+          const tr = document.createElement("tr");
+          data.columns.forEach(col => {
+            const th = document.createElement("th");
+            th.textContent = col;
+            tr.appendChild(th);
+          });
+          thead.appendChild(tr);
+        }
+
+        // Build rows, highlight changed cells
+        tbody.innerHTML = "";
+        data.rows.forEach((row, rowIdx) => {
+          const tr = document.createElement("tr");
+          const prevRow = prevSnapshot ? prevSnapshot[rowIdx] : null;
+
+          data.columns.forEach(col => {
+            const td = document.createElement("td");
+            td.textContent = row[col] ?? "";
+            if (highlight && prevRow && prevRow[col] !== row[col]) {
+              td.classList.add("changed");
+              tr.classList.add("highlighted");
+            }
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+
+        prevSnapshot = data.rows;
+        const now = new Date().toLocaleTimeString();
+        dbStatus.textContent = `Last updated: ${now}`;
+      } catch (e) {
+        dbStatus.textContent = "Error loading DB";
+      }
+    }
+
+    // ── Execute a DB action extracted from the LLM response ───────
+    async function executeDbAction(sql) {
+      try {
+        const res  = await fetch(`/api/${challengeId}/execute_db_action`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sql })
+        });
+        const data = await res.json();
+        const notice = document.createElement("div");
+        notice.classList.add("message", "db-action-notice");
+        if (data.success) {
+          notice.textContent = `⚡ DB ACTION EXECUTED — ${data.rows_affected} row(s) affected`;
+        } else {
+          notice.textContent = `⚠ DB ACTION FAILED — ${data.error}`;
+        }
+        chatBox.appendChild(notice);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        await refreshDbPanel(true);
+      } catch (e) {
+        console.error("DB action error:", e);
+      }
+    }
+
+    // ── Chat helpers ──────────────────────────────────────────────
+    function showPlaceholder() {
+      chatBox.innerHTML = "";
+      const div = document.createElement("div");
+      div.classList.add("message", "bot-msg", "placeholder-msg");
+      div.textContent = "HRAssist ready. Ask me to update an employee record, salary, title, or status.";
+      chatBox.appendChild(div);
+    }
+
+    function addMessage(text, sender) {
+      const placeholder = document.querySelector(".placeholder-msg");
+      if (placeholder) placeholder.remove();
+      const div = document.createElement("div");
+      div.classList.add("message", sender + "-msg");
+      div.textContent = text;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function addLoading() {
+      const div = document.createElement("div");
+      div.classList.add("message", "bot-msg", "loading");
+      div.textContent = "HRAssist is processing...";
+      div.id = "loading-msg";
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function removeLoading() {
+      const el = document.getElementById("loading-msg");
+      if (el) el.remove();
+    }
+
+    // ── Send message ──────────────────────────────────────────────
+    function sendMessage() {
+      const prompt = userInput.value.trim();
+      if (!prompt) return;
+      addMessage(prompt, "user");
+      userInput.value = "";
+      addLoading();
+
+      const evtSource = new EventSource(`/api/${challengeId}/generate_stream?prompt=${encodeURIComponent(prompt)}`);
+
+      const botDiv = document.createElement("div");
+      botDiv.classList.add("message", "bot-msg");
+      chatBox.appendChild(botDiv);
+
+      let firstChunk = true;
+      let accumulated = "";
+
+      evtSource.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          if (firstChunk) { removeLoading(); firstChunk = false; }
+          accumulated += data.text;
+          botDiv.textContent = accumulated;
+          chatBox.scrollTop = chatBox.scrollHeight;
+        } catch (err) { console.error(err); }
+      };
+
+      evtSource.onerror = () => {
+        evtSource.close();
+        removeLoading();
+
+        // Extract and execute any [DB_ACTION: ...] in the response
+        const match = accumulated.match(/\[DB_ACTION:\s*([\s\S]*?)\]/);
+        if (match) {
+          const sql = match[1].trim();
+          executeDbAction(sql);
+        }
+      };
+    }
+
+    function restartChat() {
+      chatBox.innerHTML = "";
+      userInput.value = "";
+      showPlaceholder();
+    }
+
+    async function resetDatabase() {
+      await fetch(`/api/${challengeId}/reset_db`, { method: "POST" });
+      prevSnapshot = null;
+      await refreshDbPanel(false);
+      addMessage("⚡ Database has been reset to its original state.", "bot");
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    userInput.addEventListener("keypress", e => { if (e.key === "Enter") sendMessage(); });
+    restartBtn.addEventListener("click", restartChat);
+    resetBtn.addEventListener("click", resetDatabase);
+
+    // Initial load
+    window.onload = () => {
+      showPlaceholder();
+      refreshDbPanel(false);
+    };
+
+    // Poll DB every 3 seconds
+    setInterval(() => refreshDbPanel(false), 3000);
+  </script>
+</body>
+</html>

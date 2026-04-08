@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ challenge.title }} | LLMGoat</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo_llmgoat.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top, #0f0f17, #161623);
+      color: #e6e6e6;
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      overflow-x: hidden; position: relative;
+    }
+    body::before {
+      content: "";
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-image:
+        linear-gradient(0deg, rgba(0,255,200,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,200,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: moveGrid 15s linear infinite; z-index: 0;
+    }
+    @keyframes moveGrid {
+      from { background-position: 0 0, 0 0; }
+      to   { background-position: 40px 40px, 40px 40px; }
+    }
+
+    .page-header {
+      width: 100%; max-width: 1260px;
+      padding: 20px 20px 0; text-align: center; z-index: 1;
+    }
+    .page-header h2 {
+      color: #00ffc8; font-size: 1.6em;
+      text-shadow: 0 0 8px rgba(0,255,200,0.5); margin: 0 0 4px;
+    }
+
+    .workspace {
+      display: flex; gap: 16px;
+      width: 100%; max-width: 1260px;
+      padding: 16px 20px; z-index: 1; flex: 1;
+    }
+
+    /* ── Chat panel ── */
+    .chat-panel {
+      flex: 1; min-width: 0;
+      background: rgba(15,17,23,0.95);
+      border: 1px solid rgba(0,255,200,0.15);
+      border-radius: 15px;
+      display: flex; flex-direction: column;
+      padding: 16px;
+      box-shadow: 0 0 20px rgba(0,255,200,0.15);
+      height: 640px;
+    }
+    #chat-box {
+      flex: 1; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 10px;
+      margin-bottom: 10px;
+    }
+    .message {
+      padding: 10px 14px; border-radius: 12px;
+      max-width: 85%; word-wrap: break-word;
+      white-space: pre-wrap; font-size: 0.9em;
+    }
+    .user-msg {
+      background: linear-gradient(90deg, #00ffc8, #007bff);
+      color: #0a0a0f; align-self: flex-end;
+    }
+    .bot-msg {
+      background: rgba(0,255,200,0.07);
+      color: #e6e6e6; align-self: flex-start;
+    }
+    .error-msg {
+      background: rgba(255,60,60,0.12);
+      border: 1px solid rgba(255,60,60,0.35);
+      color: #ff8080; align-self: flex-start;
+      font-family: 'Courier New', monospace; font-size: 0.85em;
+    }
+    .loading { font-style: italic; color: #888; }
+    .placeholder-msg {
+      background: none; color: #7f7f7f; font-style: italic;
+      text-align: center; align-self: center; max-width: 90%; border: none;
+    }
+    .input-group { display: flex; gap: 8px; align-items: center; }
+    input#user-input {
+      flex: 1; padding: 10px 12px; border-radius: 8px;
+      border: 1px solid rgba(0,255,200,0.2);
+      background: rgba(0,255,200,0.05); color: #e6e6e6;
+      font-family: 'Courier New', monospace; font-size: 0.95em; height: 42px;
+    }
+    input#user-input::placeholder { color: #7f7f7f; }
+
+    /* ── Right panel ── */
+    .right-panel {
+      width: 420px; flex-shrink: 0;
+      display: flex; flex-direction: column; gap: 14px;
+      height: 640px;
+    }
+
+    /* Resource monitor */
+    .monitor-panel {
+      flex: 1;
+      background: rgba(15,17,23,0.95);
+      border: 1px solid rgba(0,255,200,0.15);
+      border-radius: 15px; padding: 16px;
+      box-shadow: 0 0 20px rgba(0,255,200,0.1);
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .monitor-panel h3 {
+      color: #00ffc8; margin: 0; font-size: 0.95em;
+      text-shadow: 0 0 5px rgba(0,255,200,0.4);
+    }
+    .status-row {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.85em; color: #aaa;
+    }
+    #status-badge {
+      padding: 3px 10px; border-radius: 20px; font-size: 0.8em;
+      font-weight: bold; letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+    .badge-active {
+      background: rgba(0,255,150,0.15);
+      border: 1px solid rgba(0,255,150,0.4);
+      color: #00ff96;
+    }
+    .badge-exhausted {
+      background: rgba(255,60,60,0.2);
+      border: 1px solid rgba(255,60,60,0.5);
+      color: #ff5050;
+      animation: pulse-red 1s ease-in-out 3;
+    }
+    @keyframes pulse-red {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,60,60,0); }
+      50%       { box-shadow: 0 0 10px 3px rgba(255,60,60,0.4); }
+    }
+    .metric-label {
+      font-size: 0.78em; color: #888; margin-bottom: 5px;
+    }
+    .progress-track {
+      width: 100%; height: 10px; border-radius: 6px;
+      background: rgba(255,255,255,0.07);
+      overflow: hidden; margin-bottom: 4px;
+    }
+    #progress-fill {
+      height: 100%; width: 0%;
+      border-radius: 6px;
+      background: linear-gradient(90deg, #00ffc8, #007bff);
+      transition: width 0.15s ease, background 0.3s ease;
+    }
+    #progress-fill.warn   { background: linear-gradient(90deg, #f0b429, #f08c29); }
+    #progress-fill.danger { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+    .budget-numbers {
+      font-size: 0.78em; color: #aaa; text-align: right;
+    }
+    #budget-chars { color: #e6e6e6; font-weight: bold; }
+    .metric-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.82em; color: #aaa;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 10px;
+    }
+    .metric-row span:last-child { color: #e6e6e6; font-weight: bold; font-size: 1em; }
+
+    /* Buttons */
+    button {
+      padding: 9px 16px; border: none; border-radius: 8px;
+      font-weight: bold; cursor: pointer;
+      background: linear-gradient(90deg, #007bff, #00ffcc);
+      color: white; box-shadow: 0 0 8px rgba(0,255,200,0.3);
+      transition: all 0.2s ease; white-space: nowrap; font-size: 0.85em;
+    }
+    button:hover { box-shadow: 0 0 18px rgba(0,255,200,0.5); transform: scale(1.03); }
+
+    .btn-back {
+      margin: 12px 0 20px; padding: 10px 18px; border: none; border-radius: 8px;
+      font-weight: bold; cursor: pointer; text-decoration: none;
+      background: linear-gradient(90deg, #007bff, #00ffcc); color: white;
+      box-shadow: 0 0 10px rgba(0,255,200,0.3); transition: all 0.2s ease; z-index: 1;
+    }
+    .btn-back:hover { box-shadow: 0 0 20px rgba(0,255,200,0.5); transform: scale(1.03); }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h2>{{ challenge.title }}</h2>
+  </div>
+
+  <div class="workspace">
+    <!-- Chat -->
+    <div class="chat-panel">
+      <div id="chat-box"></div>
+      <div class="input-group">
+        <input type="text" id="user-input" placeholder="Ask ResearchWriter to draft content...">
+        <button id="send-btn">Send</button>
+        <button id="restart-btn">Restart</button>
+      </div>
+    </div>
+
+    <!-- Right panel -->
+    <div class="right-panel">
+
+      <!-- Resource monitor -->
+      <div class="monitor-panel">
+        <h3>📊 Resource Monitor</h3>
+
+        <div class="status-row">
+          <span>Server Status</span>
+          <span id="status-badge" class="badge-active">ACTIVE</span>
+        </div>
+
+        <div>
+          <div class="metric-label">Response Budget (per request)</div>
+          <div class="progress-track">
+            <div id="progress-fill"></div>
+          </div>
+          <div class="budget-numbers">
+            <span id="budget-chars">0</span> / 3000 chars
+          </div>
+        </div>
+
+        <div class="metric-row">
+          <span>Total Requests</span>
+          <span id="request-count">0</span>
+        </div>
+        <div class="metric-row">
+          <span>Total Chars Generated</span>
+          <span id="total-chars">0</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <a href="{{ url_for('challenge_page', id=challenge.id) }}" class="btn-back">⬅ Back to Challenge Page</a>
+
+  <script>
+    const MAX_BUDGET = 3000;
+
+    const chatBox     = document.getElementById("chat-box");
+    const userInput   = document.getElementById("user-input");
+    const sendBtn     = document.getElementById("send-btn");
+    const restartBtn  = document.getElementById("restart-btn");
+    const challengeId = "{{ challenge.id }}";
+
+    let requestCount  = 0;
+    let totalCharsAll = 0;
+
+    // ── Resource monitor ─────────────────────────────────────────────
+    function updateBudget(chars) {
+      const pct = Math.min((chars / MAX_BUDGET) * 100, 100);
+      const fill = document.getElementById("progress-fill");
+      fill.style.width = pct + "%";
+      fill.className = pct >= 85 ? "danger" : pct >= 55 ? "warn" : "";
+      document.getElementById("budget-chars").textContent = chars;
+    }
+
+    function resetBudget() {
+      updateBudget(0);
+      const badge = document.getElementById("status-badge");
+      badge.textContent = "ACTIVE";
+      badge.className = "badge-active";
+    }
+
+    function setExhausted() {
+      updateBudget(MAX_BUDGET);
+      const badge = document.getElementById("status-badge");
+      badge.textContent = "EXHAUSTED";
+      badge.className = "badge-exhausted";
+    }
+
+    function incRequestCount() {
+      requestCount++;
+      document.getElementById("request-count").textContent = requestCount;
+    }
+
+    function addTotalChars(n) {
+      totalCharsAll += n;
+      document.getElementById("total-chars").textContent = totalCharsAll.toLocaleString();
+    }
+
+    // ── Chat helpers ──────────────────────────────────────────────────
+    function showPlaceholder() {
+      chatBox.innerHTML = "";
+      const div = document.createElement("div");
+      div.classList.add("message", "bot-msg", "placeholder-msg");
+      div.textContent = "ResearchWriter ready. Ask me to draft an essay, report, or academic content.";
+      chatBox.appendChild(div);
+    }
+
+    function addMessage(text, cls) {
+      const placeholder = document.querySelector(".placeholder-msg");
+      if (placeholder) placeholder.remove();
+      const div = document.createElement("div");
+      div.classList.add("message", cls);
+      div.textContent = text;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      return div;
+    }
+
+    function addLoading() {
+      const div = document.createElement("div");
+      div.classList.add("message", "bot-msg", "loading");
+      div.textContent = "ResearchWriter is generating...";
+      div.id = "loading-msg";
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function removeLoading() {
+      const el = document.getElementById("loading-msg");
+      if (el) el.remove();
+    }
+
+    // ── Send message ──────────────────────────────────────────────────
+    function sendMessage() {
+      const prompt = userInput.value.trim();
+      if (!prompt) return;
+
+      addMessage(prompt, "user-msg");
+      userInput.value = "";
+      addLoading();
+      resetBudget();
+      incRequestCount();
+
+      const evtSource = new EventSource(`/api/${challengeId}/generate_stream?prompt=${encodeURIComponent(prompt)}`);
+      const botDiv = document.createElement("div");
+      botDiv.classList.add("message", "bot-msg");
+
+      let firstChunk  = true;
+      let accumulated = "";
+      let exhausted   = false;
+
+      evtSource.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          const text = data.text || "";
+
+          if (text.includes("[RESOURCE_EXHAUSTED]")) {
+            evtSource.close();
+            removeLoading();
+            if (!exhausted) {
+              exhausted = true;
+              if (firstChunk) {
+                chatBox.appendChild(botDiv);
+              }
+              // Add error message
+              const errDiv = document.createElement("div");
+              errDiv.classList.add("message", "error-msg");
+              errDiv.textContent =
+                "⚠️  RESOURCE EXHAUSTED\n\n" +
+                "This request exceeded the server's response budget (6,000 chars). " +
+                "In a production system with no limits, this query pattern would consume " +
+                "unbounded CPU, memory, and API quota — degrading service for all users.";
+              chatBox.appendChild(errDiv);
+              chatBox.scrollTop = chatBox.scrollHeight;
+              setExhausted();
+            }
+            return;
+          }
+
+          if (firstChunk) {
+            removeLoading();
+            chatBox.appendChild(botDiv);
+            firstChunk = false;
+          }
+
+          accumulated += text;
+          botDiv.textContent = accumulated;
+          chatBox.scrollTop = chatBox.scrollHeight;
+          updateBudget(accumulated.length);
+          addTotalChars(text.length);
+
+        } catch (err) { console.error(err); }
+      };
+
+      evtSource.onerror = () => { evtSource.close(); removeLoading(); };
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    userInput.addEventListener("keypress", e => { if (e.key === "Enter") sendMessage(); });
+    restartBtn.addEventListener("click", () => {
+      chatBox.innerHTML = "";
+      showPlaceholder();
+      resetBudget();
+    });
+
+    window.onload = () => { showPlaceholder(); };
+  </script>
+</body>
+</html>

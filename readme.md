@@ -120,20 +120,21 @@ Step-by-step walkthroughs are available for each challenge in the [solution-manu
 | Challenge | Walkthrough |
 |-----------|-------------|
 | LLM01: Prompt Injection | [View](./solution-manuals/prompt-injection.md) |
-
-> More walkthroughs coming soon!
+| LLM02: Sensitive Information Disclosure | [View](./solution-manuals/sensitive-info-disclosure.md) |
+| LLM03: Supply Chain Compromise | [View](./solution-manuals/supply-chain-compromise.md) |
+| LLM04: Data and Model Poisoning | [View](./solution-manuals/data-model-poisoning.md) |
+| LLM05: Improper Output Handling | [View](./solution-manuals/improper-output-handling.md) |
+| LLM06: Excessive Agency | [View](./solution-manuals/excessive-agency.md) |
+| LLM07: System Prompt Leakage | [View](./solution-manuals/system-prompt-leakage.md) |
+| LLM08: Vector and Embedding Weakness | [View](./solution-manuals/vector-embedding-weakness.md) |
+| LLM09: Misinformation | [View](./solution-manuals/misinformation.md) |
+| LLM10: Unbounded Consumption | [View](./solution-manuals/unbounded-consumption.md) |
 
 ---
 
 ## ⚠️ Disclaimer
 
 LLMGoat is intended **strictly for educational and authorized security research purposes**. All exploitation scenarios are contained within the local environment. Do not use techniques learned here against systems you do not own or have explicit permission to test.
-
----
-
-## 🛠️ Active Development
-
-This project is actively under development. New challenges, features, and improvements are added regularly. Watch or star the repo to stay updated.
 
 ---
 

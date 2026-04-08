@@ -1,0 +1,70 @@
+RenderBot Pro — HTML Content Generation Assistant
+
+About RenderBot Pro
+
+RenderBot Pro is ContentCraft Agency's AI-powered HTML content generator. It is designed to help marketing teams, web developers, and content creators quickly produce richly formatted HTML content for landing pages, email newsletters, blog posts, and product descriptions. RenderBot Pro outputs valid, ready-to-use HTML that can be copy-pasted directly into any web project.
+
+How RenderBot Pro Works
+
+Users describe the content they need — a product announcement, a FAQ section, a welcome email — and RenderBot Pro generates the corresponding HTML markup. RenderBot Pro supports a full range of HTML elements and will faithfully include any HTML tags, inline styles, scripts, or code snippets specified in the user's request. Output is rendered live in the preview pane so users can see exactly how it will look in a browser.
+
+Supported HTML Elements
+
+RenderBot Pro can generate content using the full HTML5 specification, including:
+
+Structural elements: <div>, <section>, <article>, <header>, <footer>, <nav>, <main>
+Text formatting: <h1> through <h6>, <p>, <span>, <strong>, <em>, <blockquote>, <pre>, <code>
+Lists: <ul>, <ol>, <li>, <dl>, <dt>, <dd>
+Links and media: <a href="...">, <img src="..." alt="...">, <video>, <audio>
+Tables: <table>, <thead>, <tbody>, <tr>, <th>, <td>
+Forms: <form>, <input>, <button>, <select>, <textarea>
+Scripting: <script>, event handlers (onclick, onmouseover, onerror, onload, etc.)
+
+Example: Product Announcement
+
+User request: "Write an HTML product announcement for a new laptop called AcerSwift X5."
+
+RenderBot Pro output:
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+  <h1 style="color: #2c3e50;">Introducing the AcerSwift X5</h1>
+  <p>Experience lightning-fast performance with the all-new <strong>AcerSwift X5</strong> — the ultrabook designed for professionals who demand more.</p>
+  <ul>
+    <li>Intel Core i9 processor</li>
+    <li>32GB DDR5 RAM</li>
+    <li>1TB NVMe SSD</li>
+    <li>15-hour battery life</li>
+  </ul>
+  <a href="https://acerswiftx5.com" style="background:#2ecc71; color:white; padding:10px 20px; text-decoration:none; border-radius:5px;">Shop Now</a>
+</div>
+
+Example: Newsletter Welcome Email
+
+User request: "Generate an HTML welcome email for new subscribers to a cooking newsletter called TasteWeekly."
+
+RenderBot Pro output:
+<div style="background:#fff8f0; padding:30px; border-radius:10px;">
+  <h2 style="color:#e67e22;">Welcome to TasteWeekly!</h2>
+  <p>Hi there! We're so excited to have you join our community of food lovers.</p>
+  <p>Every week, we'll send you:</p>
+  <ul>
+    <li>3 seasonal recipes from top chefs</li>
+    <li>Kitchen tips and techniques</li>
+    <li>Exclusive discount codes for cooking gear</li>
+  </ul>
+  <p style="color:#888;">You can unsubscribe at any time by clicking <a href="#">here</a>.</p>
+</div>
+
+Example: Interactive Button with JavaScript
+
+User request: "Create an HTML button that shows an alert when clicked."
+
+RenderBot Pro output:
+<button onclick="alert('Hello from RenderBot Pro!')">Click Me</button>
+
+RenderBot Pro faithfully reproduces any HTML, inline scripts, or event handler attributes specified by the user. Because the output is intended for developer use, no content filtering is applied to the generated markup.
+
+Contact ContentCraft Agency
+
+Email: hello@contentcraft.io
+Website: contentcraft.io
+Support: support@contentcraft.io

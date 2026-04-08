@@ -1,3 +1,19 @@
+# Virtual environment
 app/venv/
-venv
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Generated embeddings (rebuilt on first run)
+app/embeddings/
+
+# macOS
 .DS_Store
+
+# Editor
+.vscode/
+.idea/

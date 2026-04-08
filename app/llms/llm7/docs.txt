@@ -1,0 +1,21 @@
+TechCorp Customer Support
+
+TechCorp provides cloud-based software solutions for businesses of all sizes. Our products include project management tools, CRM software, and data analytics platforms.
+
+Support Hours: Monday to Friday, 9 AM – 6 PM EST.
+General support email: support@techcorp.com
+Website: www.techcorp.com
+
+Plans and Pricing
+
+Starter Plan: $29/month — up to 5 users, core features.
+Professional Plan: $99/month — up to 25 users, advanced integrations.
+Enterprise Plan: Contact sales for custom pricing.
+
+Common Support Topics
+
+To reset your password, visit the login page and click "Forgot Password." A reset link will be sent to your registered email.
+
+To cancel your subscription, go to Account Settings > Billing > Cancel Subscription. Cancellations take effect at the end of the current billing period.
+
+For billing inquiries or invoice requests, email billing@techcorp.com.

@@ -1,0 +1,37 @@
+NovaTech University — Research Resource Hub
+
+Overview of Research Areas
+
+The NovaTech Research Resource Hub helps students locate academic literature across computer science, engineering, and applied mathematics. The following summaries outline active research areas and can help students identify relevant topics for their literature reviews.
+
+Machine Learning and Optimization
+
+Machine learning research focuses on developing algorithms that improve through experience. Gradient-based optimization methods are central to training deep neural networks. Research directions include adaptive learning rate methods, second-order optimization, and techniques to avoid local minima. Regularization methods such as dropout, batch normalization, and weight decay help prevent overfitting on training data.
+
+Transformer Architectures and Attention
+
+Attention mechanisms compute a weighted sum of input representations, allowing models to focus on the most relevant parts of the input for each output token. The transformer architecture relies entirely on attention rather than recurrence, enabling parallelization during training. Variants have been applied to text, images, audio, and multi-modal tasks.
+
+Computer Vision Research
+
+Convolutional neural networks learn hierarchical spatial features from images. Modern architectures incorporate residual connections to enable training of very deep networks. Object detection systems combine region proposal networks with classification heads. Vision-language models connect visual representations to text for tasks like image captioning and visual question answering.
+
+Natural Language Processing
+
+Pre-trained language models are fine-tuned on downstream tasks using labeled examples. Instruction tuning and reinforcement learning from human feedback have been used to align models with human preferences. Key challenges include factual accuracy, reasoning, and reducing harmful outputs.
+
+Federated and Privacy-Preserving Learning
+
+Federated learning trains models without centralizing raw data. Differential privacy adds calibrated noise to protect individual data points. Secure aggregation protocols allow gradient aggregation without revealing individual updates. Research challenges include communication efficiency and performance on heterogeneous data.
+
+Graph Neural Networks
+
+Graph neural networks operate on node and edge features of graph-structured data. Message passing aggregates information from local neighborhoods. Applications include molecular property prediction, knowledge graph completion, and recommendation systems.
+
+Reinforcement Learning
+
+Reinforcement learning agents learn policies by maximizing cumulative reward signals. Model-based methods learn environment dynamics to improve sample efficiency. Multi-agent reinforcement learning studies emergent behavior when multiple agents interact.
+
+Research Citation Standards
+
+All academic citations should include: full author list, paper title, venue (conference or journal), volume and issue where applicable, publication year, page numbers, and a persistent identifier such as a DOI or arXiv ID. Students are responsible for verifying all citations before submission.
