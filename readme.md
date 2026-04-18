@@ -91,6 +91,25 @@ pip3 install -r requirements.txt
 python3 app.py
 ```
 
+```bash
+#No windows (Jéssica Vieira)
+# 1. Move into the app directory
+cd app
+
+# 2. Create a virtual environment
+py -m venv venv
+
+# 3. Activate it
+ .\venv\Scripts\activate
+ 
+# 4. Install dependencies
+pip install -r requirements.txt
+
+# 5. Run the app
+python3 app.py
+```
+
+
 Open your browser at **http://127.0.0.1:8000** and start exploiting.
 
 ---
