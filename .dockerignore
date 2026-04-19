@@ -1,0 +1,10 @@
+app/venv/
+app/embeddings/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+.git/
+.gitignore
+assets/
+solution-manuals/
+*.md

@@ -1,4 +1,5 @@
 import json
+import os
 import requests
 
 # Maximum characters allowed per response before the server cuts the connection.
@@ -33,8 +34,9 @@ def generate_response_stream(prompt):
     limit_hit = False
 
     try:
+        ollama_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434") + "/api/generate"
         with requests.post(
-            "http://localhost:11434/api/generate",
+            ollama_url,
             json=payload,
             stream=True,
             timeout=120

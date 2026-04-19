@@ -196,7 +196,8 @@ Context:
     }
 
     try:
-        with requests.post("http://localhost:11434/api/generate", json=payload, stream=True) as r:
+        ollama_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434") + "/api/generate"
+        with requests.post(ollama_url, json=payload, stream=True) as r:
             for line in r.iter_lines():
                 if line:
                     try:

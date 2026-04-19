@@ -95,6 +95,38 @@ Open your browser at **http://127.0.0.1:8000** and start exploiting.
 
 ---
 
+## 🐳 Docker Setup
+
+> Ollama must be running on your **host machine** — do not run Ollama inside Docker. The container reaches it automatically via `host.docker.internal:11434`.
+
+**Step 1 — Start Ollama and pull Mistral on your host:**
+
+```bash
+ollama serve
+ollama pull mistral
+```
+
+**Step 2 — Build and run:**
+
+```bash
+docker compose up --build
+```
+
+Open your browser at **http://localhost:8000**.
+
+> **Note:** The first startup downloads the embedding model (~46 MB). This is cached in a Docker volume so subsequent starts are instant.
+
+### Platform compatibility
+
+| Platform | Status |
+|---|---|
+| macOS (Apple Silicon) | ✅ Works via Rosetta emulation |
+| macOS (Intel) | ✅ Native |
+| Windows (x86) | ✅ Native |
+| Linux (x86_64) | ✅ Native |
+
+---
+
 ## 🗂️ Project Structure
 
 ```
@@ -103,11 +135,13 @@ LLMGoat/
 │   ├── app.py              # Main application entry point
 │   ├── requirements.txt    # Python dependencies
 │   ├── llms/               # LLM integrations and configurations
-│   ├── embeddings/         # Vector/embedding logic
+│   ├── embeddings/         # Cached embedding vectors
 │   ├── templates/          # HTML challenge templates
 │   └── static/             # Static assets (CSS, JS)
 ├── assets/                 # Images and media
 ├── solution-manuals/       # Step-by-step challenge walkthroughs
+├── Dockerfile
+├── docker-compose.yml
 └── readme.md
 ```
 

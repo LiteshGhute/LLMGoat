@@ -68,7 +68,7 @@ def generate_response_stream(prompt):
     most_similar = find_most_similar(prompt_embedding, embeddings, top_k=5)
     context = "\n".join(paragraphs[i[1]] for i in most_similar)
 
-    ollama_url = "http://localhost:11434/api/generate"
+    ollama_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434") + "/api/generate"
     payload = {
         "model": "mistral",
         "prompt": prompt,
