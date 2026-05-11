@@ -9,6 +9,7 @@
     <img src="https://img.shields.io/badge/Python-3.12-blue?style=flat-square&logo=python" alt="Python 3.12"/>
     <img src="https://img.shields.io/badge/LLM-Mistral%20%7C%20Ollama-purple?style=flat-square" alt="Mistral / Ollama"/>
     <img src="https://img.shields.io/badge/status-active%20development-brightgreen?style=flat-square" alt="Status"/>
+    <a href="https://bsideskerala.in/schedule/"><img src="https://img.shields.io/badge/Featured%20At-BSides%20Kerala%202026-orange?style=flat-square" alt="Featured at BSides Kerala 2026"/></a>
   </p>
 
   <p>
@@ -27,6 +28,8 @@ LLMGoat is a **gamified, hands-on exploitation environment** for learning offens
 LLMGoat lets you **safely exploit, observe, and measure** the impact of these attacks in realistic scenarios — so you understand the risks before they hit production.
 
 > **10 core challenges**, each mapped directly to the [OWASP LLM Top 10](https://owasp.org/www-project-top-10-for-large-language-model-applications/).
+
+> 🏆 **Featured tool at [BSides Kerala 2026](https://bsideskerala.in/schedule/)**
 
 ---
 
