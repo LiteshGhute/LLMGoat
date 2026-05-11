@@ -11,7 +11,7 @@
     <img src="https://img.shields.io/badge/status-active%20development-brightgreen?style=flat-square" alt="Status"/>
   </p>
 
-  <a href="https://bsideskerala.in/schedule/">
+  <a href="https://bsideskerala.in/">
     <img src="https://img.shields.io/badge/🏆%20Featured%20At-BSides%20Kerala%202026-FF6600?style=for-the-badge" alt="Featured at BSides Kerala 2026"/>
   </a>
 
@@ -32,7 +32,7 @@ LLMGoat lets you **safely exploit, observe, and measure** the impact of these at
 
 > **10 core challenges**, each mapped directly to the [OWASP LLM Top 10](https://owasp.org/www-project-top-10-for-large-language-model-applications/).
 
-> 🏆 **Featured tool at [BSides Kerala 2026](https://bsideskerala.in/schedule/)**
+> 🏆 **Featured tool at [BSides Kerala 2026](https://bsideskerala.in/)**
 
 ---
 
